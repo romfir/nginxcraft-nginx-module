@@ -102,13 +102,20 @@ ngx_stream_nginxcraft_create_srv_conf(ngx_conf_t *cf)
 static ngx_int_t
 ngx_stream_nginxcraft_handler(ngx_stream_session_t *s)
 {
-    ngx_int_t                    rc;
-    ngx_connection_t            *c;
-    ngx_stream_nginxcraft_ctx_t *ctx;
+    ngx_int_t                            rc;
+    ngx_connection_t                    *c;
+    ngx_stream_nginxcraft_ctx_t         *ctx;
+    ngx_stream_nginxcraft_srv_conf_t    *nscf;
 
     c = s->connection;
 
     ngx_log_debug0(NGX_LOG_DEBUG_STREAM, c->log, 0, "nginxcraft handler");
+
+    nscf = ngx_stream_get_module_srv_conf(s, ngx_stream_nginxcraft_module);
+
+    if (!nscf->enabled) {
+        return NGX_DECLINED;
+    }
 
     if (c->buffer == NULL) {
         return NGX_AGAIN;
@@ -132,10 +139,6 @@ ngx_stream_nginxcraft_handler(ngx_stream_session_t *s)
 
     if (rc == NGX_OK) {
         return ngx_stream_nginxcraft_servername(s, &ctx->host);
-    }
-
-    if (rc == NGX_DECLINED) {
-        return NGX_OK;
     }
 
     return rc;
