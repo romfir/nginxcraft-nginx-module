@@ -122,7 +122,7 @@ ngx_int_t
 ngx_stream_nginxcraft_parse(ngx_stream_nginxcraft_ctx_t *ctx, ngx_buf_t *buf)
 {
     u_char              *p = buf->pos;
-    size_t               len = p - buf->last;;
+    size_t               len = buf->last - p;
     minecraft_packet     packet;
     minecraft_handshake  handshake;
     nginxcraft_var      *vars;
